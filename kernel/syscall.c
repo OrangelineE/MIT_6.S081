@@ -149,7 +149,7 @@ static char syscall_name[32][32]  = {
 [SYS_sbrk]    "sbrk",
 [SYS_sleep]   "sleep",
 [SYS_uptime]  "uptime",
-[SYS_open]   " open",
+[SYS_open]    "open",
 [SYS_write]   "write",
 [SYS_mknod]   "mknod",
 [SYS_unlink]  "unlink",
