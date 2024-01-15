@@ -6,6 +6,8 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "sysinfo.h"
+
 
 uint64
 sys_exit(void)
@@ -94,4 +96,39 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+uint64
+sys_trace(void)
+{
+  int t_mask;
+  //get the mask through argint()
+  //0: get the first argument from the user space
+  if(argint(0, &t_mask) < 0)
+    return -1; 
+  //give the mask value to the current process
+  myproc()->mask = t_mask;
+  // printf("t_mask is %d\n", t_mask);
+  //don't forget the return value!
+  return 0;
+}
+
+extern int collect_free_mem(void);
+extern int collect_using_proc(void);
+
+uint64
+sys_info(void)
+{
+  struct proc *p = myproc();
+  uint64 si; // user pointer to struct sysinfo
+
+  struct sysinfo info;
+  info.freemem = collect_free_mem();
+  info.nproc =  collect_using_proc();
+
+  if(argaddr(0, &si) < 0) 
+    return -1;
+  //copy the struct sysinfo back to user space
+  if(copyout(p->pagetable, si, (char *)&info, sizeof(info)) < 0)
+      return -1;
+    return 0;
 }
