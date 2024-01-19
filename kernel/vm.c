@@ -21,8 +21,13 @@ extern char trampoline[]; // trampoline.S
 void
 kvminit()
 {
+  // allocates a page of physical memory to hold the root page-table page. 
   kernel_pagetable = (pagetable_t) kalloc();
   memset(kernel_pagetable, 0, PGSIZE);
+  // include the kernel’s instructions and data, physical memory up to PHYSTOP, 
+  // and memory ranges which are actually devices.
+  // install mappings into a page table for a range of virtual addresses
+  // to a corresponding range of physical addresses
 
   // uart registers
   kvmmap(UART0, UART0, PGSIZE, PTE_R | PTE_W);
